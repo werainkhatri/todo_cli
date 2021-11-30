@@ -1,6 +1,7 @@
 import sys
 
 __TASK_FILE__ = "task.txt"
+__COMPLETED_FILE__ = "completed.txt"
 
 def main():
     args = sys.argv[1:]
@@ -13,6 +14,11 @@ def main():
             add(args[1], ' '.join(args[2:]))
     elif args[0] == "ls":
         ls()
+    elif args[0] == "done":
+        if len(args) < 2:
+            print("Error: Missing NUMBER for marking tasks as done.")
+        else:
+            done(args[1])
 
 
 def help():
@@ -61,6 +67,25 @@ def add(priority, task):
     __dump__(__TASK_FILE__, tasks)
 
     print("Added task: \"" + task + "\" with priority " + priority)
+
+
+def done(index):
+    '''
+    Marks the task at index `index` as completed, moving it to the completed list.
+    '''
+    tasks = __fetch__(__TASK_FILE__)
+
+    if not index.isdigit() or int(index) <= 0 or int(index) > len(tasks):
+        print('Error: no incomplete item with index #' + index + ' exists.')
+        return
+
+    completed = __fetch__(__COMPLETED_FILE__)
+    completed.append(tasks.pop(int(index)-1))
+
+    __dump__(__TASK_FILE__, tasks)
+    __dump__(__COMPLETED_FILE__, completed)
+
+    print('Marked item as done.')
 
 
 def __fetch__(filename):
