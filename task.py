@@ -14,6 +14,11 @@ def main():
             add(args[1], ' '.join(args[2:]))
     elif args[0] == "ls":
         ls()
+    elif args[0] == "del":
+        if len(args) < 2:
+            print("Error: Missing NUMBER for deleting tasks.")
+        else:
+            delete(args[1])
     elif args[0] == "done":
         if len(args) < 2:
             print("Error: Missing NUMBER for marking tasks as done.")
@@ -74,6 +79,22 @@ def add(priority, task):
     __dump__(__TASK_FILE__, tasks)
 
     print("Added task: \"" + task + "\" with priority " + priority)
+
+
+def delete(index):
+    '''
+    Delete an item at index `index`.
+    '''
+    tasks = __fetch__(__TASK_FILE__)
+    
+    if not index.isdigit() or int(index) > len(tasks) or int(index) < 1:
+        print("Error: task with index #" + index + " does not exist. Nothing deleted.")
+        return
+    
+    tasks.pop(int(index) - 1)
+    print("Deleted task #" + index)
+
+    __dump__(__TASK_FILE__, tasks)
 
 
 def done(index):
