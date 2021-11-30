@@ -19,6 +19,12 @@ def main():
             print("Error: Missing NUMBER for marking tasks as done.")
         else:
             done(args[1])
+    elif args[0] == "report":
+        report()
+    elif args[0] == 'clear':
+        __clear__()
+    else:
+        print("Error: Unknown command. Use `$ ./task help` to see usage.")
 
 
 def help():
@@ -39,6 +45,7 @@ def ls():
     Show pending tasks sorted by priority.
     '''
     tasks = __fetch__(__TASK_FILE__)
+
     if len(tasks) == 0:
         print('There are no pending tasks!')
         return
@@ -53,7 +60,7 @@ def add(priority, task):
     '''
     Add a new item with priority PRIORITY and text TEXT to the list.
     '''
-    if not priority.isdigit() or int(priority) <= 0:
+    if not priority.isdigit() or int(priority) < 0:
         print("Error :- Invalid priority. It should be an integer greater than 0")
         return
 
@@ -86,6 +93,34 @@ def done(index):
     __dump__(__COMPLETED_FILE__, completed)
 
     print('Marked item as done.')
+
+
+def report():
+    '''
+    Shows the number of complete and incomplete items in the list.
+    '''
+    tasks = __fetch__(__TASK_FILE__)
+    completed = __fetch__(__COMPLETED_FILE__)
+
+    print("Pending : " + str(len(tasks)))
+    if len(tasks) > 0:
+        ls()
+
+    print()
+
+    print("Completed : " + str(len(completed)))
+    for i in range(len(completed)):
+        # -1 for the `\n` at the end of each line
+        task = completed[i][:-1].split(' ')
+        print(str(i+1) + ". " + ' '.join(task[1:]))
+
+
+def __clear__():
+    '''
+    Clears `__TASK_FILE__` and `__COMPLETED_FILE__`.
+    '''
+    __dump__(__TASK_FILE__, [])
+    __dump__(__COMPLETED_FILE__, [])
 
 
 def __fetch__(filename):
